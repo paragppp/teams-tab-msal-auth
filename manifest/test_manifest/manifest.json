@@ -1,0 +1,49 @@
+{
+    "$schema": "https://statics.teams.microsoft.com/sdk/v1.2/manifest/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.2",
+    "version": "1.0.0",
+    "id": "[generate new app guid]",
+    "packageName": "test.app",
+    "developer": {
+        "name": "test",
+        "websiteUrl": "[your website url]",
+        "privacyUrl": "[your privacy url]",
+        "termsOfUseUrl": "[your t&c url]"
+    },
+    "icons": {
+        "color": "color.png",
+        "outline": "outline.png"
+    },
+    "name": {
+        "short": "test",
+        "full": "test"
+    },
+    "description": {
+        "short": "test",
+        "full": "test"
+    },
+    "accentColor": "#FFFFFF",
+    "configurableTabs": [
+        {
+            "configurationUrl": "[full path to config.html]",
+            "canUpdateConfiguration": true,
+            "scopes": [
+                "team"
+            ]
+        }
+    ],
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": [
+        "[your endpoint].azurewebsites.net",
+        "*.microsoft.com",
+        "graph.microsoft.com",
+        "*.microsoftonline.com",
+        "login.microsoftonline.com",
+        "[your custom domain if you have set one up or remove this line]",
+        "*.ngrok.io [if you are doing local debugging with ngrok or remove this line]",
+        "*.azurewebsites.net"
+    ]
+}
