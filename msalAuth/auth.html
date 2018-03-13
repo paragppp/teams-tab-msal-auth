@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <script src="https://secure.aadcdn.microsoftonline-p.com/lib/0.1.1/js/msal.min.js"></script>
+    <script src="https://statics.teams.microsoft.com/sdk/v1.0/js/MicrosoftTeams.min.js"></script>
+
+    <script>
+
+        microsoftTeams.initialize();
+
+        let graphAPIScopes = ["https://graph.microsoft.com/user.read", "https://graph.microsoft.com/user.readwrite"];
+
+        let userAgentApplication = new Msal.UserAgentApplication(
+            "9dd444f2-c90a-4848-add5-20d9be92591e",
+            "https://login.microsoftonline.com/common",
+            this.tokenReceivedCallback);
+
+        if (userAgentApplication.isCallback(window.location.hash)) {
+            userAgentApplication.handleAuthenticationResponse(
+                window.location.hash,
+                (token) => {
+                    if (this.user == null) {
+                        this.user = userAgentApplication.getUser();
+                        this.getToken(userAgentApplication, graphAPIScopes);
+                    } else {
+                        microsoftTeams.authentication.notifySuccess(token);
+                    }
+                },
+                (error) => { microsoftTeams.authentication.notifyFailure(error); }
+            );
+        } else {
+            this.user = userAgentApplication.getUser();
+            if (!this.user) {
+                // If user is not signed in, then prompt user to sign in via loginRedirect.
+                // This will redirect user to the Azure Active Directory v2 Endpoint
+                userAgentApplication.loginRedirect(graphAPIScopes);
+            } else {
+                this.getToken(userAgentApplication, graphAPIScopes);
+            }
+        }
+
+        function getToken(userAgentApplication, graphAPIScopes) {
+            // In order to call the Graph API, an access token needs to be acquired.
+            // Try to acquire the token used to query Graph API silently first:
+            userAgentApplication.acquireTokenSilent(graphAPIScopes).then(
+                (token) => {
+                    //After the access token is acquired, return to MS Teams, sending the acquired token
+                    microsoftTeams.authentication.notifySuccess(token);
+                },
+                (error) => {
+                    // If the acquireTokenSilent() method fails, then acquire the token interactively via acquireTokenRedirect().
+                    // In this case, the browser will redirect user back to the Azure Active Directory v2 Endpoint so the user
+                    // can reenter the current username/ password and/ or give consent to new permissions your application is requesting.
+                    if (error) {
+                        userAgentApplication.acquireTokenRedirect(graphAPIScopes);
+                    }
+                }
+            );
+        }
+
+        function tokenReceivedCallback(errorDesc, token, error, tokenType) {
+            //  suppress typescript compile errors
+        }
+    </script></body>
+</html>
